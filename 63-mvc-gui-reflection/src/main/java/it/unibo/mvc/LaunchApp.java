@@ -1,6 +1,7 @@
 package it.unibo.mvc;
 
 import it.unibo.mvc.api.DrawNumberController;
+import it.unibo.mvc.api.DrawNumberView;
 import it.unibo.mvc.controller.DrawNumberControllerImpl;
 import it.unibo.mvc.model.DrawNumberImpl;
 import it.unibo.mvc.view.DrawNumberConsoleView;
@@ -13,6 +14,18 @@ public final class LaunchApp {
 
     private LaunchApp() { }
 
+    private static void makeThreeViews(String viewClassName, DrawNumberController controller)
+    {
+        for (int i = 0; i < 3; i++) {
+            try{
+                final DrawNumberView view = (DrawNumberView)Class.forName(viewClassName).getConstructor().newInstance();
+                controller.addView(view);
+            }
+            catch (Exception e){ 
+                System.out.println("Unable to make views, exceptions thown: " + e);
+            }
+        }
+    }
     /**
      * Runs the application.
      *
@@ -27,8 +40,9 @@ public final class LaunchApp {
     public static void main(final String... args) {
         final var model = new DrawNumberImpl();
         final DrawNumberController app = new DrawNumberControllerImpl(model);
-        app.addView(new DrawNumberSwingView());
-        app.addView(new DrawNumberSwingView());
-        app.addView(new DrawNumberConsoleView());
+        
+        
+        makeThreeViews("it.unibo.mvc.view.DrawNumberSwingView", app);
+        makeThreeViews("it.unibo.mvc.view.DrawNumberConsoleView", app);
     }
 }
